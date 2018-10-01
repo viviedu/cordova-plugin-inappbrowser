@@ -737,6 +737,10 @@ BOOL isExiting = FALSE;
         ) {
         userAgent = [NSString stringWithFormat:@"%@ %@", userAgent, [self settingForKey:@"AppendUserAgent"]];
     }
+    if (_browserOptions.spoofwebview) {
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(Mobile/[^ ]+)" options:0 error:nil];
+        userAgent = [regex stringByReplacingMatchesInString:userAgent options:0 range:NSMakeRange(0, userAgent.length) withTemplate:@" Version/11.0 $1 Safari/604.1"];
+    }
     configuration.applicationNameForUserAgent = userAgent;
     configuration.userContentController = userContentController;
 #if __has_include("CDVWKProcessPoolFactory.h")
