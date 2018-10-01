@@ -91,6 +91,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String SHOULD_PAUSE = "shouldPauseOnSuspend";
     private static final Boolean DEFAULT_HARDWARE_BACK = true;
     private static final String USER_WIDE_VIEW_PORT = "useWideViewPort";
+    private static final String SPOOF_WEBVIEW = "spoofWebview";
 
     private InAppBrowserDialog dialog;
     private WebView inAppWebView;
@@ -105,6 +106,7 @@ public class InAppBrowser extends CordovaPlugin {
     private boolean mediaPlaybackRequiresUserGesture = false;
     private boolean shouldPauseInAppBrowser = false;
     private boolean useWideViewPort = true;
+    private boolean spoofWebview = false;
     private ValueCallback<Uri> mUploadCallback;
     private ValueCallback<Uri[]> mUploadCallbackLollipop;
     private final static int FILECHOOSER_REQUESTCODE = 1;
@@ -570,6 +572,10 @@ public class InAppBrowser extends CordovaPlugin {
             if (wideViewPort != null ) {
 		            useWideViewPort = wideViewPort.booleanValue();
             }
+            Boolean sw = features.get(SPOOF_WEBVIEW);
+            if (sw != null) {
+                spoofWebview = sw.booleanValue();
+            }
         }
 
         final CordovaWebView thatWebView = this.webView;
@@ -791,6 +797,10 @@ public class InAppBrowser extends CordovaPlugin {
                 }
                 if (appendUserAgent != null) {
                     settings.setUserAgentString(settings.getUserAgentString() + appendUserAgent);
+                }
+
+                if (spoofWebview) {
+                    settings.setUserAgentString(settings.getUserAgentString().replaceAll("; wv", ""));
                 }
 
                 //Toggle whether this is enabled or not!

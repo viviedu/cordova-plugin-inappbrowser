@@ -152,6 +152,10 @@
         if(appendUserAgent){
             userAgent = [userAgent stringByAppendingString: appendUserAgent];
         }
+        if (browserOptions.spoofwebview) {
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@" (Mobile/[^ ]+)" options:0 error:nil];
+            userAgent = [regex stringByReplacingMatchesInString:userAgent options:0 range:NSMakeRange(0, userAgent.length) withTemplate:@" Version/11.0 $1 Safari/604.1"];
+        }
         self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:userAgent prevUserAgent:[self.commandDelegate userAgent] browserOptions: browserOptions];
         self.inAppBrowserViewController.navigationDelegate = self;
 
@@ -995,6 +999,7 @@
         self.suppressesincrementalrendering = NO;
         self.hidden = NO;
         self.disallowoverscroll = NO;
+        self.spoofwebview = NO;
     }
 
     return self;
