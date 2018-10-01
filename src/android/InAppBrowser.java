@@ -118,6 +118,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final String SPOOF_WEBVIEW = "spoofWebview";
 
     private static final int TOOLBAR_HEIGHT = 48;
 
@@ -149,6 +150,7 @@ public class InAppBrowser extends CordovaPlugin {
     private String footerColor = "";
     private String beforeload = "";
     private boolean fullscreen = true;
+    private boolean spoofWebview = false;
     private String[] allowedSchemes;
     private InAppBrowserClient currentClient;
 
@@ -715,6 +717,10 @@ public class InAppBrowser extends CordovaPlugin {
             if (fullscreenSet != null) {
                 fullscreen = fullscreenSet.equals("yes") ? true : false;
             }
+            String sw = features.get(SPOOF_WEBVIEW);
+            if (sw != null) {
+                spoofWebview = sw.equals("yes") ? true : false;
+            }
         }
 
         final CordovaWebView thatWebView = this.webView;
@@ -1001,6 +1007,9 @@ public class InAppBrowser extends CordovaPlugin {
                     settings.setUserAgentString(settings.getUserAgentString() + " " + appendUserAgent);
                 }
 
+                if (spoofWebview) {
+                    settings.setUserAgentString(settings.getUserAgentString().replaceAll("; wv", ""));
+                }
                 //Toggle whether this is enabled or not!
                 Bundle appSettings = cordova.getActivity().getIntent().getExtras();
                 boolean enableDatabase = appSettings == null ? true : appSettings.getBoolean("InAppBrowserStorageEnabled", true);
